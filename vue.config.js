@@ -37,6 +37,16 @@ module.exports = {
       errors: true
     },
     proxy: {
+      '/center': {
+        target: 'http://localhost:8100',
+        ws: true,
+        changeOrigin: true
+      },
+      '/prod': {
+        target: '<url>',
+        ws: true,
+        changeOrigin: true
+      },
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {

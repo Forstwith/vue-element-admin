@@ -74,21 +74,21 @@ export default {
           }
         }],
         series: [{
-          name: 'pageA',
+          name: 'Connecting',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
           data: [79, 52, 200, 334, 390, 330, 220],
           animationDuration
         }, {
-          name: 'pageB',
+          name: 'Error disconnected',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
           data: [80, 52, 200, 334, 390, 330, 220],
           animationDuration
         }, {
-          name: 'pageC',
+          name: 'Connected count',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',

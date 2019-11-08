@@ -90,10 +90,10 @@ export default {
           }
         },
         legend: {
-          data: ['expected', 'actual']
+          data: ['ErrorDisconnects', 'ConnectedCounts']
         },
         series: [{
-          name: 'expected', itemStyle: {
+          name: 'ErrorDisconnects', itemStyle: {
             normal: {
               color: '#FF005A',
               lineStyle: {
@@ -109,7 +109,7 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'actual',
+          name: 'ConnectedCounts',
           smooth: true,
           type: 'line',
           itemStyle: {
