@@ -27,17 +27,17 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      chart: null
+    }
+  },
   watch: {
     chartData: {
       deep: true,
       handler(val) {
         this.setOptions(val)
       }
-    }
-  },
-  data() {
-    return {
-      chart: null
     }
   },
   mounted() {
@@ -53,9 +53,11 @@ export default {
     this.chart = null
   },
   methods: {
-    initChart({ connectingClients, errorDisconnect,connectedCount } = {}) {
+    initChart({ } = {}) {
       this.chart = echarts.init(this.$el, 'macarons')
-
+      this.setOptions(this.chartData)
+    },
+    setOptions({ connectingClients, errorDisconnect,connectedCount } = {}) {
       this.chart.setOption({
         tooltip: {
           trigger: 'item',
@@ -68,7 +70,7 @@ export default {
         },
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: 'WEEKLY STATISTICS',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],

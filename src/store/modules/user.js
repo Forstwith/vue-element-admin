@@ -9,17 +9,12 @@ const state = {
   introduction: '',
   roles: [],
   dashbard: {
-    lineChartData: {
-      expectedData: [0, 0, 0, 0, 0, 0, 0],
-      actualData: [1, 2, 3, 4, 5, 6, 7],
-      weekData: [2, 3, 4, 5, 6, 7, 1]
-    },
     connectingClients: 11,
     connectedCount: 22,
     errorDisconnect: 33,
-    weekConnectingClients: [1, 2, 3, 4, 5, 6, 7],
+    weekConnectingClient: [1, 2, 3, 4, 5, 6, 7],
     weekConnectedCount: [1, 2, 3, 4, 5, 6, 7],
-    weekErrorDisconnect: [2, 3, 4, 5, 6, 7, 8],
+    weekErrorDisconnected: [2, 3, 4, 5, 6, 7, 8],
     week: [2, 3, 4, 5, 6, 7, 1]
   }
 }
@@ -39,6 +34,10 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  // 修改dashboard数据
+  SET_DASHBOARD: (state, dashbard) => {
+    state.dashbard = dashbard
   }
 }
 
@@ -113,6 +112,12 @@ const actions = {
       commit('SET_ROLES', [])
       removeToken()
       resolve()
+    })
+  },
+  // 修改dashboard的数据
+  setDashbarod({ commit, dispatch }, dashbard) {
+    return new Promise(async resolve => {
+      commit('SET_DASHBOARD', dashbard)
     })
   },
 

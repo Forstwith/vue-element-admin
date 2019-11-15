@@ -10,7 +10,7 @@
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="{
-      expectedData: this.$store.state.user.dashbard.weekErrorDisconnect,
+      expectedData: this.$store.state.user.dashbard.weekErrorDisconnected,
       actualData: this.$store.state.user.dashbard.weekConnectedCount,
       weekData: this.$store.state.user.dashbard.week
     }" />
@@ -32,7 +32,11 @@
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <bar-chart />
+          <bar-chart :chart-data="{
+      weekErrorDisconnected: this.$store.state.user.dashbard.weekErrorDisconnected,
+      weekConnectedCount: this.$store.state.user.dashbard.weekConnectedCount,
+      connectingClients: this.$store.state.user.dashbard.connectingClients,
+      weekData: this.$store.state.user.dashbard.week}"/>
         </div>
       </el-col>
     </el-row>
@@ -70,24 +74,8 @@ export default {
 
   mounted() {
     // 获取初始化数据
-    console.log({
-      expectedData: this.$store.state.user.dashbard.weekErrorDisconnect,
-      actualData: this.$store.state.user.dashbard.weekConnectedCount,
-      weekData: this.$store.state.user.dashbard.weekData
-    })
     initDashboard().then(response => {
-      // this.$store.dispatch()
-      // var stat = {
-      //   expectedData: response.data.weekErrorDisconnected,
-      //   actualData: response.data.weekConnectedCount
-      // }
-      // this.panelChartDate = {
-      //   connectingClients: response.data.connectingClients,
-      //   connectedCount: response.data.connectedCount,
-      //   errorDisconnect: response.data.errorDisconnect
-      // }
-      // lineChartData.Statistics = stat
-      // this.testIncrease()
+      this.$store.dispatch('user/setDashbarod',response.data)
     })
   },
 

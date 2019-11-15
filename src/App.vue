@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import { MessageBox, Message, Notification } from 'element-ui'
+import store from '@/store'
 export default {
   name: 'App',
   data() {
@@ -13,9 +15,12 @@ export default {
 
     }
   },
+  created() {
+      this.initWebSocket()
+  },
   methods: {
       initWebSocket(){ // 初始化weosocket
-        const wsuri = `ws://192.168.18.169:8059/websocket/${localStorage.getItem('userId')}`// 这个地址由后端童鞋提供
+        const wsuri = `ws://127.0.0.1:8100/websocket/${localStorage.getItem('userId')}`// 这个地址由后端童鞋提供
         this.websock = new WebSocket(wsuri);
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;
@@ -24,10 +29,23 @@ export default {
       },
       websocketonopen(){ // 连接建立之后执行send方法发送数据
         this.websocketsend(this.user)
-        console.log(111);
+        Notification ({
+          message: "websocket连接成功",
+          type: 'success',
+          duration: 5 * 1000,
+          position:'top-right',
+          showClose: false
+        })
       },
       websocketonerror(){// 连接建立失败重连
-        this.initWebSocket()
+        // this.initWebSocket()
+        Notification ({
+          message: "websocket连接失败",
+          type: 'error',
+          duration: 5 * 1000,
+          position:'top-right',
+          showClose: false
+        })
       },
       websocketonmessage(e){
         let _this = this // 数据接收
