@@ -7,7 +7,21 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
-  roles: []
+  roles: [],
+  dashbard: {
+    lineChartData: {
+      expectedData: [0, 0, 0, 0, 0, 0, 0],
+      actualData: [1, 2, 3, 4, 5, 6, 7],
+      weekData: [2, 3, 4, 5, 6, 7, 1]
+    },
+    connectingClients: 11,
+    connectedCount: 22,
+    errorDisconnect: 33,
+    weekConnectingClients: [1, 2, 3, 4, 5, 6, 7],
+    weekConnectedCount: [1, 2, 3, 4, 5, 6, 7],
+    weekErrorDisconnect: [2, 3, 4, 5, 6, 7, 8],
+    week: [2, 3, 4, 5, 6, 7, 1]
+  }
 }
 
 const mutations = {

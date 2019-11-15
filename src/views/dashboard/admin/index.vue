@@ -2,10 +2,18 @@
   <div class="dashboard-editor-container">
     <!-- <github-corner class="github-corner" /> -->
 
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+    <panel-group :chart-data="{
+      connectingClients: this.$store.state.user.dashbard.connectingClients,
+      connectedCount: this.$store.state.user.dashbard.connectedCount,
+      errorDisconnect: this.$store.state.user.dashbard.errorDisconnect
+    }"  />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
+      <line-chart :chart-data="{
+      expectedData: this.$store.state.user.dashbard.weekErrorDisconnect,
+      actualData: this.$store.state.user.dashbard.weekConnectedCount,
+      weekData: this.$store.state.user.dashbard.week
+    }" />
     </el-row>
 
     <el-row :gutter="32">
@@ -16,7 +24,10 @@
       </el-col> -->
       <el-col :xs="24" :sm="24" :lg="8">
         <div class="chart-wrapper">
-          <pie-chart />
+          <pie-chart :chart-data="{
+            connectingClients: this.$store.state.user.dashbard.connectingClients,
+            connectedCount: this.$store.state.user.dashbard.connectedCount,
+            errorDisconnect: this.$store.state.user.dashbard.errorDisconnect}"/>
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="8">
@@ -31,32 +42,12 @@
 <script>
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
+// import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
+import { initDashboard } from '@/api/remote-search'
 // import TransactionTable from './components/TransactionTable'
-const lineChartData = {
-  ConnecttingClients: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  ConnectedCounts: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  ErrorDisconnects: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  Messages: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  },
-  Statistics: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
+
 
 export default {
   name: 'DashboardAdmin',
@@ -64,20 +55,51 @@ export default {
     // GithubCorner,
     PanelGroup,
     LineChart,
-    RaddarChart,
+    // RaddarChart,
     PieChart,
     BarChart
 
   },
   data() {
     return {
-      
-      lineChartData: lineChartData.Statistics
     }
   },
+  created() {
+
+  },
+
+  mounted() {
+    // 获取初始化数据
+    console.log({
+      expectedData: this.$store.state.user.dashbard.weekErrorDisconnect,
+      actualData: this.$store.state.user.dashbard.weekConnectedCount,
+      weekData: this.$store.state.user.dashbard.weekData
+    })
+    initDashboard().then(response => {
+      // this.$store.dispatch()
+      // var stat = {
+      //   expectedData: response.data.weekErrorDisconnected,
+      //   actualData: response.data.weekConnectedCount
+      // }
+      // this.panelChartDate = {
+      //   connectingClients: response.data.connectingClients,
+      //   connectedCount: response.data.connectedCount,
+      //   errorDisconnect: response.data.errorDisconnect
+      // }
+      // lineChartData.Statistics = stat
+      // this.testIncrease()
+    })
+  },
+
   methods: {
     handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]
+    },
+    testIncrease() {
+      setInterval(() => {
+        this.panelChartDate.connectingClients += 5
+        console.log(this.panelChartDate.connectingClients)
+      }, 5000)
     }
   }
 }

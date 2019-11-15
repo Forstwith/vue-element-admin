@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             Connectting Clients
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="chartData.connectingClients" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             Connected Counts
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="chartData.connectedCount" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             Error Disconnects
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="chartData.errorDisconnect" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             Messages
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="chartData.errorDisconnect" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -59,14 +59,35 @@
 import CountTo from 'vue-count-to'
 
 export default {
+  props: {
+    className: {
+      type: String,
+      default: 'chart'
+    },
+    chartData: {
+      type: Object,
+      required: true
+    }
+  },
+  data(){
+    return {
+      
+    }
+  },
   components: {
     CountTo
+  },
+  created() {
+    // 初始化数据
+  },
+  mounted() {
   },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
     }
-  }
+  },
+
 }
 </script>
 

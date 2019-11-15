@@ -42,6 +42,11 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
+      '/agent': {
+        target: 'http://localhost:8100',
+        ws: true,
+        changeOrigin: true
+      },
       '/prod': {
         target: '<url>',
         ws: true,

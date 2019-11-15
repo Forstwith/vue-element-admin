@@ -15,3 +15,13 @@ export function transactionList(query) {
     params: query
   })
 }
+
+export function initDashboard(query) {
+  return request({
+    url: '/center/overview',
+    method: 'get',
+    params: query,
+    baseURL: ''
+  })
+}
+

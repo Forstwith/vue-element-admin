@@ -21,6 +21,18 @@ export default {
     height: {
       type: String,
       default: '300px'
+    },
+    chartData: {
+      type: Object,
+      required: true
+    }
+  },
+  watch: {
+    chartData: {
+      deep: true,
+      handler(val) {
+        this.setOptions(val)
+      }
     }
   },
   data() {
@@ -41,7 +53,7 @@ export default {
     this.chart = null
   },
   methods: {
-    initChart() {
+    initChart({ connectingClients, errorDisconnect,connectedCount } = {}) {
       this.chart = echarts.init(this.$el, 'macarons')
 
       this.chart.setOption({
@@ -62,9 +74,9 @@ export default {
             radius: [15, 95],
             center: ['50%', '38%'],
             data: [
-              { value: 10, name: 'Connecting' },
-              { value: 20, name: 'Error disconnected'},
-              { value: 50, name: 'Connected count' }
+              { value: connectingClients, name: 'Connecting' },
+              { value: errorDisconnect, name: 'Error disconnected'},
+              { value: connectedCount, name: 'Connected count' }
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600
