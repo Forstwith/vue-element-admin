@@ -46,9 +46,9 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Messages
+            Agents
           </div>
-          <count-to :start-val="0" :end-val="chartData.errorDisconnect" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="chartData.agentsCount" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>

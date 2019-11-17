@@ -5,7 +5,8 @@
     <panel-group :chart-data="{
       connectingClients: this.$store.state.user.dashbard.connectingClients,
       connectedCount: this.$store.state.user.dashbard.connectedCount,
-      errorDisconnect: this.$store.state.user.dashbard.errorDisconnect
+      errorDisconnect: this.$store.state.user.dashbard.errorDisconnect,
+      agentsCount: this.$store.state.user.dashbard.agentsCount
     }"  />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">

@@ -25,16 +25,22 @@ const tableRouter = {
     //   meta: { title: 'Drag Table' }
     // },
     {
-      path: 'inline-edit-table',
-      component: () => import('@/views/table/inline-edit-table'),
+      path: 'agents-table',
+      component: () => import('@/views/table/agents-table'),
       name: 'Agents',
       meta: { title: 'Agents' }
     },
     {
-      path: 'complex-table',
-      component: () => import('@/views/table/complex-table'),
+      path: 'client-table',
+      component: () => import('@/views/table/client-table'),
       name: 'Clients',
       meta: { title: 'Clients' }
+    },
+    {
+      path: 'complex-table',
+      component: () => import('@/views/table/complex-table'),
+      name: 'complex',
+      meta: { title: 'complex' }
     }
   ]
 }

@@ -8,6 +8,23 @@ export function fetchList(query) {
   })
 }
 
+export function fetchAgentsList(query) {
+  return request({
+    url: '/center/agent/infoList',
+    method: 'get',
+    params: query,
+    baseURL: ''
+  })
+}
+export function fetchClientList(query) {
+  return request({
+    url: '/center/client/infoList',
+    method: 'get',
+    params: query,
+    baseURL: ''
+  })
+}
+
 export function fetchArticle(id) {
   return request({
     url: '/article/detail',

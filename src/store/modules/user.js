@@ -9,13 +9,14 @@ const state = {
   introduction: '',
   roles: [],
   dashbard: {
-    connectingClients: 11,
-    connectedCount: 22,
-    errorDisconnect: 33,
-    weekConnectingClient: [1, 2, 3, 4, 5, 6, 7],
-    weekConnectedCount: [1, 2, 3, 4, 5, 6, 7],
-    weekErrorDisconnected: [2, 3, 4, 5, 6, 7, 8],
-    week: [2, 3, 4, 5, 6, 7, 1]
+    connectingClients: 0,
+    connectedCount: 0,
+    errorDisconnect: 0,
+    agentsCount: 0,
+    weekConnectingClient: [0, 0, 0, 0, 0, 0, 0],
+    weekConnectedCount: [0, 0, 0, 0, 0, 0, 0],
+    weekErrorDisconnected: [0, 0, 0, 0, 0, 0, 0],
+    week: [1, 2, 3, 4, 5, 6, 7]
   }
 }
 

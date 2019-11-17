@@ -1,31 +1,55 @@
 <template>
   <div class="app-container">
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="ID" width="80">
+      <el-table-column align="center" label="Num" width="180">
         <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
+          <span>{{ row.num }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="180px" align="center" label="Date">
+      <!-- <el-table-column width="180px" align="center" label="Date">
         <template slot-scope="{row}">
           <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
-      </el-table-column>
-
-      <el-table-column width="120px" align="center" label="Author">
+      </el-table-column> -->
+      <el-table-column width="280px" align="center" label="lastUpdateDate">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.lastUpdatedTimestamp | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column width="220px" align="center" label="agentName">
+        <template slot-scope="{row}">
+          <span>{{ row.agentName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="100px" label="Importance">
+      <el-table-column width="220px" align="center" label="agentIp">
+        <template slot-scope="{row}">
+          <span>{{ row.agentIp }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="220px" align="center" label="agentPort">
+        <template slot-scope="{row}">
+          <span>{{ row.agentPort }}</span>
+        </template>
+      </el-table-column>
+
+  
+
+      <el-table-column width="220px" align="center" label="actionType">
+        <template slot-scope="{row}">
+          <span>{{ row.actionType }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- <el-table-column width="100px" label="Importance">
         <template slot-scope="{row}">
           <svg-icon v-for="n in + row.importance" :key="n" icon-class="star" class="meta-item__icon" />
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
-      <el-table-column class-name="status-col" label="Status" width="110">
+      <el-table-column class-name="status-col" label="Status" width="210">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status }}
@@ -33,7 +57,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="300px" label="Title">
+      <!-- <el-table-column min-width="300px" label="Title">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <el-input v-model="row.title" class="edit-input" size="small" />
@@ -49,10 +73,10 @@
           </template>
           <span v-else>{{ row.title }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
-      <el-table-column align="center" label="Actions" width="120">
-        <template slot-scope="{row}">
+      <el-table-column align="center" label="Actions" width="180">
+        <!-- <template slot-scope="{row}">
           <el-button
             v-if="row.edit"
             type="success"
@@ -71,23 +95,23 @@
           >
             Edit
           </el-button>
-        </template>
+        </template> -->
       </el-table-column>
     </el-table>
   </div>
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
+import { fetchAgentsList,fetchList} from '@/api/article'
 
 export default {
   name: 'InlineEditTable',
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
+        UP: 'success',
         draft: 'info',
-        deleted: 'danger'
+        DOWN: 'danger'
       }
       return statusMap[status]
     }
@@ -108,12 +132,13 @@ export default {
   methods: {
     async getList() {
       this.listLoading = true
-      const { data } = await fetchList(this.listQuery)
-      const items = data.items
-      console.log(items)
+      const { data } = await fetchAgentsList(this.listQuery)
+      console.log( data)
+      const items = data.list
+      var i = 0;
       this.list = items.map(v => {
-        this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-        v.originalTitle = v.title //  will be used when user click the cancel botton
+        v['status'] = "UP"
+        v['num'] = ++i
         return v
       })
       this.listLoading = false
