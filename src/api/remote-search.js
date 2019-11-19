@@ -24,4 +24,11 @@ export function initDashboard(query) {
     baseURL: ''
   })
 }
-
+export function closeClient(query) {
+  return request({
+    url: '/client/overview',
+    method: 'post',
+    params: query,
+    baseURL: ''
+  })
+}

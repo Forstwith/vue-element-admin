@@ -42,7 +42,7 @@
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="goToTable('Messages')">
         <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
+          <svg-icon icon-class="star" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">

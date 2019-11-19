@@ -1,28 +1,26 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
+      <el-input v-model="listQuery.agentName" placeholder="agentName" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.clientId" placeholder="clientId" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      
+      <!-- <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-      <el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">
+      </el-select> -->
+      <!-- <el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-      </el-select>
-      <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
+      </el-select> -->
+      <el-select v-model="listQuery.sortString" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        Add
-      </el-button>
+
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
       </el-button>
-      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        reviewer
-      </el-checkbox>
+
     </div>
 
     <el-table
@@ -35,7 +33,7 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="120" :class-name="getSortClass('id')">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
@@ -47,15 +45,21 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="lastConnectedTime" width="300" align="center">
+      <el-table-column label="lastConnectedTime" width="250" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.createTime }}</span>
+          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="agentName" width="250" align="center">
+      <el-table-column label="agentName" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.agentName }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="agentAddress" width="200" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.agentAddress }}</span>
         </template>
       </el-table-column>
 
@@ -65,7 +69,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Status" class-name="status-col" width="200">
+      <el-table-column label="Status" class-name="status-col" width="150">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status }}
@@ -75,17 +79,17 @@
 
       <el-table-column label="Actions" align="center" width="350" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
+          <el-button v-if="row.status=='connecting'" type="primary" size="mini" @click="handleUpdate(row)">
+            MSG
           </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            Publish
+          <el-button v-if="row.status=='connecting'" size="mini" type="danger" @click="handleMsg(row,'socketClose')">
+            CLOSE
           </el-button>
-          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
-            Draft
+          <el-button v-if="row.status=='connecting'" size="mini" type="success" @click="handleMsg(row, 'changeDoorStatus', {doorStatus: 'Access'})">
+            Access
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(row,'deleted')">
-            Delete
+          <el-button v-if="row.status=='connecting'" size="mini" type="danger" @click="handleMsg(row, 'changeDoorStatus', {doorStatus: 'Forbid'})">
+            Forbid
           </el-button>
         </template>
       </el-table-column>
@@ -93,40 +97,21 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <!-- <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Type" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Date" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
-        </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Imp">
-          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
-        </el-form-item>
-        <el-form-item label="Remark">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+        <el-form-item label="Message" prop="msg">
+          <el-input v-model="temp.msg" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="sendMessage()">
           Confirm
         </el-button>
       </div>
-    </el-dialog> -->
+    </el-dialog>
 <!-- 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
@@ -141,7 +126,7 @@
 </template>
 
 <script>
-import { fetchClientList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import {sendMessageClient, fetchClientList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -184,17 +169,15 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 5,
-        importance: undefined,
-        title: undefined,
+        limit: 10,
         type: undefined,
         clientId: undefined,
         agentName: undefined,
-        sort: '+id'
+        sortString: 'id DESC'
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      sortOptions: [{ label: 'ID Ascending', key: 'id ASC' }, { label: 'ID Descending', key: 'id DESC' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
@@ -202,14 +185,15 @@ export default {
         importance: 1,
         remark: '',
         timestamp: new Date(),
-        title: '',
+        agentName: '',
+        clientId: '',
         type: '',
         status: 'published'
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
+        update: 'Input Message',
         create: 'Create'
       },
       dialogPvVisible: false,
@@ -217,7 +201,8 @@ export default {
       rules: {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        agentName: [{ required: true, message: 'agentName is required', trigger: 'blur' }],
+        clientId: [{ required: true, message: 'clientId is required', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -229,13 +214,14 @@ export default {
     getList() {
       this.listLoading = true
       fetchClientList(this.listQuery).then(response => {
-        console.log(response)
+        // console.log(response)
         this.list = response.data.list.map(v =>{
           if(v.historyType == 0){
             v['status'] = "connecting"
           }else {
             v['status'] = "disconnected"
           }
+          v.createTime = new Date(v.createTime).getTime()
           return v;
         })
         this.total = response.data.total
@@ -264,9 +250,9 @@ export default {
     },
     sortByID(order) {
       if (order === 'ascending') {
-        this.listQuery.sort = '+id'
+        this.listQuery.sortString = 'id ASC'
       } else {
-        this.listQuery.sort = '-id'
+        this.listQuery.sortString = 'id DESC'
       }
       this.handleFilter()
     },
@@ -289,26 +275,17 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    createData() {
+    sendMessage() {
+      const _this = this;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
+          _this.handleMsg(_this.temp.row , 'printMsg' , _this.temp)
+          this.dialogFormVisible = false
         }
       })
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
+      this.temp.row = row// copy obj
       this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -350,6 +327,40 @@ export default {
       const index = this.list.indexOf(row)
       this.list.splice(index, 1)
     },
+    openInputLayer() {
+
+    },
+    handleMsg(row ,functionName ,param) {
+      var query = {
+          type: 'TEXT'
+      }
+      if(functionName){
+        query['type'] = 'FUNCTION'
+        query['functionName'] = functionName
+      }
+      query["clientId"] = row.clientId
+      query["agentAddress"] = row.agentAddress
+      query["param"] = param
+      sendMessageClient(query).then(response =>{
+        console.log(response)
+        if(response.succ){
+          this.$message({
+            title: 'Success',
+            message: '操作成功！',
+            type: 'success',
+            duration: 2000
+          })
+        }else{
+          this.$message({
+            title: 'ERROR',
+            message: '操作失败！',
+            type: 'error',
+            duration: 2000
+          })
+        }
+        
+      })
+    },
     handleFetchPv(pv) {
       fetchPv(pv).then(response => {
         this.pvData = response.data.pvData
@@ -380,10 +391,10 @@ export default {
       }))
     },
     getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}`
+      const sortString = this.listQuery.sortString
+      return sortString === `id ASC`
         ? 'ascending'
-        : sort === `-${key}`
+        : sortString === `id DESC`
           ? 'descending'
           : ''
     }

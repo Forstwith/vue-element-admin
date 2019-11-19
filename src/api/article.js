@@ -7,7 +7,22 @@ export function fetchList(query) {
     params: query
   })
 }
-
+export function sendMessageClient(query) {
+  return request({
+    url: '/random' + query.agentAddress + '/client/sendMessage/' + query.clientId,
+    method: 'post',
+    params: { message: { ...query }},
+    baseURL: ''
+  })
+}
+export function sendMessageAll(query) {
+  return request({
+    url: '/random' + query.agentAddress + '/client/sendMessage/all',
+    method: 'post',
+    params: { message: { ...query }},
+    baseURL: ''
+  })
+}
 export function fetchAgentsList(query) {
   return request({
     url: '/center/agent/infoList',

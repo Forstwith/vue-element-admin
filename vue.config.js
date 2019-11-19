@@ -47,6 +47,19 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
+      '/random': {
+        target: 'http://',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/random': ''
+        }
+      },
+      '/client': {
+        target: 'http://',
+        ws: false,
+        changeOrigin: true
+      },
       '/prod': {
         target: '<url>',
         ws: true,
