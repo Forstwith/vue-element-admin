@@ -9,7 +9,7 @@ export function fetchList(query) {
 }
 export function sendMessageClient(query) {
   return request({
-    url: '/random' + query.agentAddress + '/client/sendMessage/' + query.clientId,
+    url: '/gateway/' + query.agentName + '/client/sendMessage/' + query.clientId,
     method: 'post',
     params: { message: { ...query }},
     baseURL: ''

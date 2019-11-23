@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input v-model="listQuery.agentName" placeholder="agentName" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.clientId" placeholder="clientId" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      
+
       <!-- <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select> -->
@@ -47,7 +47,7 @@
 
       <el-table-column label="lastConnectedTime" width="250" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
+          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
 
@@ -112,7 +112,7 @@
         </el-button>
       </div>
     </el-dialog>
-<!-- 
+    <!--
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
         <el-table-column prop="key" label="Channel" />
@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import {sendMessageClient, fetchClientList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { sendMessageClient, fetchClientList, fetchPv, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -215,14 +215,14 @@ export default {
       this.listLoading = true
       fetchClientList(this.listQuery).then(response => {
         // console.log(response)
-        this.list = response.data.list.map(v =>{
-          if(v.historyType == 0){
-            v['status'] = "connecting"
-          }else {
-            v['status'] = "disconnected"
+        this.list = response.data.list.map(v => {
+          if (v.historyType === 0) {
+            v['status'] = 'connecting'
+          } else {
+            v['status'] = 'disconnected'
           }
           v.createTime = new Date(v.createTime).getTime()
-          return v;
+          return v
         })
         this.total = response.data.total
         // Just to simulate the time of the request
@@ -276,10 +276,10 @@ export default {
       })
     },
     sendMessage() {
-      const _this = this;
+      const _this = this
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          _this.handleMsg(_this.temp.row , 'printMsg' , _this.temp)
+          _this.handleMsg(_this.temp.row, 'printMsg', _this.temp)
           this.dialogFormVisible = false
         }
       })
@@ -330,27 +330,27 @@ export default {
     openInputLayer() {
 
     },
-    handleMsg(row ,functionName ,param) {
+    handleMsg(row, functionName, param) {
       var query = {
-          type: 'TEXT'
+        type: 'TEXT'
       }
-      if(functionName){
+      if (functionName) {
         query['type'] = 'FUNCTION'
         query['functionName'] = functionName
       }
-      query["clientId"] = row.clientId
-      query["agentAddress"] = row.agentAddress
-      query["param"] = param
-      sendMessageClient(query).then(response =>{
+      query['clientId'] = row.clientId
+      query['agentName'] = row.agentName
+      query['param'] = param
+      sendMessageClient(query).then(response => {
         console.log(response)
-        if(response.succ){
+        if (response.succ) {
           this.$message({
             title: 'Success',
             message: '操作成功！',
             type: 'success',
             duration: 2000
           })
-        }else{
+        } else {
           this.$message({
             title: 'ERROR',
             message: '操作失败！',
@@ -358,7 +358,6 @@ export default {
             duration: 2000
           })
         }
-        
       })
     },
     handleFetchPv(pv) {
@@ -370,13 +369,13 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const tHeader = ['ID', 'clientID', 'lastConnectedTime', 'agenName', 'agentAddress', 'clientIp', 'status']
+        const filterVal = ['id', 'clientId', 'createTime', 'agentName', 'agentAddress', 'clientIp', 'status']
         const data = this.formatJson(filterVal, this.list)
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'table-list'
+          filename: 'ClientConnectList'
         })
         this.downloadLoading = false
       })

@@ -13,7 +13,7 @@ const name = defaultSettings.title || 'vue Element Admin' // page title
 // For example, Mac: sudo npm run
 // You can change the port by the following method:
 // port = 9527 npm run dev OR npm run dev --port = 9527
-const port = process.env.port || process.env.npm_config_port || 9527 // dev port
+const port = process.env.port || process.env.npm_config_port || 9333 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -47,23 +47,13 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
-      '/random': {
-        target: 'http://',
+      '/gateway': {
+        target: 'http://127.0.0.1:35612',
         ws: true,
         changeOrigin: true,
         pathRewrite: {
-          '^/random': ''
+          '^/gateway': ''
         }
-      },
-      '/client': {
-        target: 'http://',
-        ws: false,
-        changeOrigin: true
-      },
-      '/prod': {
-        target: '<url>',
-        ws: true,
-        changeOrigin: true
       },
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
